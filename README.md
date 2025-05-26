@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This specification outlines the technical requirements for the for the [W3C Verifiable Credentials](https://www.w3.org/TR/vc-overview/) and [Open Badges 3](https://www.imsglobal.org/spec/ob/v3p0) issuer and wallet RCL cloudTnT applications. 
+This specification outlines the technical requirements for the RCL cloudTnT [W3C Verifiable Credentials](https://www.w3.org/TR/vc-overview/) and [Open Badges 3](https://www.imsglobal.org/spec/ob/v3p0) issuer and wallet  applications. 
 
 Applications that interchange data with the RCL cloudTnT application must follow the requirements of this specifications. Such applications may include external issuer applications that create digital credentials that are to be stored in the RCL cloudTnT wallet application.
 
