@@ -34,7 +34,7 @@ A holder will share their digital credential with a verifier who will make a det
 
 DIDs are created using the [did:jwk method](https://github.com/quartzjer/did-jwk/blob/main/spec.md). This is the ony method supported.
 
-When creating a did:jwk, the [RSA](https://datatracker.ietf.org/doc/html/rfc8017) cryptographic algorithm should be used with a 2048 bit key size. Only RSA asymmetric keys are supported.
+When creating a did:jwk, the [RSA](https://datatracker.ietf.org/doc/html/rfc8017) cryptographic algorithm should be used with a 2048 bit key size. Only RSA asymmetric keys are supported. The JWK should be directly included in the did:jwk.
 
 DID should be in the form of a text (.txt) file. Issuers and holders should be allowed to download and save thier DID, as well as the associated private key.
 
@@ -160,7 +160,7 @@ In the issuer application, the did private key for the holder can be stored in t
 
 Credentials should be presented as a [Json Web Token (JWT)](https://datatracker.ietf.org/doc/html/rfc7519).
 
-The header of the JWT should include public JWK defined in the issuer's DID.
+The header of the JWT should include the public JWK defined in the issuer's DID.
 
 ```json
 {
@@ -229,7 +229,7 @@ Y = Base64URLEncode(header) + '.' + Base64URLEncode(payload)
 JWT token = Y + '.' + Base64URLEncode(RSASHA256(Y))
 ```
 
-The JWT should be in the compact form.
+The JWT should be in the compact form. Only .jwt files are supoorted by the issuer and wallet applications.
 
 ### Example Crededential formatted as a JWT compact
 
@@ -239,7 +239,46 @@ eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImp3ayI6eyJrdHkiOiJSU0EiLCJuIjoieElDZGFobEla
 
 The file extension for the credential in JWT compact format should be ".jwt".
 
-Holders should be able to download their credential as a .jwt file for the issue application.
+Holders should be able to download their credential as a .jwt file from the issuer application.
 
-The file can then be uploaded to the wallet application. Alternatively, the credential can be programtically saved to the wallet using the wallet's ``Credentials API``.
+The file can then be uploaded to the wallet application. Alternatively, the credential file can be programtically saved to the wallet using the wallet's ``Credentials API``.
 
+## Wallet Credentials API
+
+A holder using an external issuer application can programtically save a credential file to the wallet application using the wallet's ``Credentials API``.
+
+### Authorization Server
+
+The issuer application must use an authorization server to obtain a JWT access token to use the ``Credentials API``. 
+
+The holder will first login to their account with the authorization server and obtain a JWT access token. The holder must login with the same account that they use to login to the wallet application. Authorization should follow the [OAuth 2](https://datatracker.ietf.org/doc/html/rfc6749) ``Authorization Code`` flow method.
+
+### POST Request
+
+The issuer application should then make a ``POST`` request to the following endpoint:
+
+```bash
+https://<api-endpoint>/api/v1/credentials
+```
+
+The request must inlcude the JWT Access Token obtained from the authorization server in the Authorization header as a bearer token.
+
+The credential in JWT compact format should be placed in the body of the request with the content type of ``text/plain``.
+
+### Example Request
+
+```bash
+POST /api/v1/credentials HTTP/1.1
+Host: localhost:7028
+Content-Type: text/plain
+Authorization: eyJsjejdbbf.....
+Content-Length: 4653
+
+eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImp3ayI6eyJrdHkiOiJSU0EiLCJuIjoieElDZGFobElaNVplbngyeVI4VHJfOWdWSi1lcUVnODJnSnd6YUxXZGhId0NmSHFJY1hTbUJjV2w4akpNWWREbmpRdGdw
+```
+
+### Response
+
+If the credential does not exist in the wallet a new credential will be saved in the wallet an ``201`` response will be sent with the credential in jwt compact format in the body of the request with content type ``text plain``.
+
+If the credential does exist, it will be updated and a ``200`` response will be returned in the response with the credential in the body.
