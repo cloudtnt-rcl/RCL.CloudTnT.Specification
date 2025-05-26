@@ -34,7 +34,7 @@ A holder will share their digital credential with a verifier who will make a det
 
 DIDs are created using the [did:jwk method](https://github.com/quartzjer/did-jwk/blob/main/spec.md). This is the ony method supported.
 
-When creating a did:jwk, the [RSA](https://datatracker.ietf.org/doc/html/rfc8017) cryptographic algorithm should be used with a 2048 bit key size. Only RSA asymmetric keys are supported. The JWK should be directly included in the did:jwk.
+When creating a did:jwk, the [RSA](https://datatracker.ietf.org/doc/html/rfc8017) cryptographic algorithm should be used with a 2048 bit key size. Only RSA asymmetric keys are supported. The [Json Web Key (JWK)](https://datatracker.ietf.org/doc/html/rfc7517) should be directly included in the did:jwk.
 
 DID should be in the form of a text (.txt) file. Issuers and holders should be allowed to download and save thier DID, as well as the associated private key.
 
@@ -219,7 +219,7 @@ The payload of the JWT should contain the credential.
 }
 ```
 
-The signature of the JWT should be created by signing the JWT with the holder's private key.
+The signature of the JWT should be created by signing the JWT with the issuer's private key.
 
 In accordance with the JWT specification, the JWT should be derived from:
 
@@ -229,7 +229,7 @@ Y = Base64URLEncode(header) + '.' + Base64URLEncode(payload)
 JWT token = Y + '.' + Base64URLEncode(RSASHA256(Y))
 ```
 
-The JWT should be in the compact form. Only ``.jwt`` files for credentials are supoorted by the issuer and wallet applications.
+The JWT should be in the compact form. Only ``.jwt`` files for credentials are supported by the issuer and wallet applications.
 
 ### Example Crededential formatted as a JWT compact
 
@@ -279,6 +279,6 @@ eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImp3ayI6eyJrdHkiOiJSU0EiLCJuIjoieElDZGFobEla
 
 ### Response
 
-If the credential does not exist in the wallet, a new credential will be saved in the wallet a ``201`` response will be returned with the credential in jwt compact format in the body of the request with content type ``text plain``.
+If the credential does not exist in the wallet, a new credential will be saved in the wallet and a ``201`` response will be returned with the credential in jwt compact format in the body of the request with content type ``text plain``.
 
 If the credential does exist, it will be updated and a ``200`` response will be returned in the response with the credential in the body.
